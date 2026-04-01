@@ -55,7 +55,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                     exit(1); // Exit on write error
                 }
                 printf("Node %d passed the token to the next node.\n", node_id);
-                sleep(3);
+                sleep(5);
             }
         }
         // Done passing the token

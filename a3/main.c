@@ -90,4 +90,24 @@ int main()
         exit(EXIT_FAILURE);
     }
     printf("Parent sent initial token to node 0.\n");
+
+    size_t total_reports = 0;
+    while (total_reports < NUM_NODES)
+    {
+        for (int i = 0; i < NUM_NODES; i++)
+        {
+            RingMessage report_msg;
+            ssize_t bytes_read = read(stat_pipes[i][0], &report_msg, sizeof(RingMessage));
+            if (bytes_read > 0)
+            {
+                printf("Parent received report from node %d: %s\n", report_msg.sender_id, report_msg.result);
+                total_reports++;
+            }
+            else if (bytes_read == -1 && errno != EAGAIN)
+            {
+                perror("read from stat pipe");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
 }
