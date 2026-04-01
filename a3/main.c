@@ -93,6 +93,7 @@ int main()
     }
     printf("Parent sent initial token to node 0.\n");
 
+    // Collect reports
     size_t total_reports = 0;
     while (total_reports < NUM_NODES * 2)
     {
@@ -113,23 +114,23 @@ int main()
             sleep(1);
         }
     }
+
+    // Send shutdown message to the ring
     RingMessage shutdown_msg = make_shutdown_msg();
-    for (int i = 0; i < NUM_NODES; i++)
+    size_t bytes_written = write(ring_pipes[0][1], &shutdown_msg, sizeof(RingMessage));
+    if (bytes_written == -1)
     {
-        size_t bytes_written = write(ring_pipes[i][1], &shutdown_msg, sizeof(RingMessage));
-        if (bytes_written == -1)
-        {
-            perror("write shutdown to ring");
-            exit(EXIT_FAILURE);
-        }
+        perror("write shutdown to ring");
+        exit(EXIT_FAILURE);
     }
-    printf("Parent sent shutdown message to all nodes.\n");
+
+    printf("Parent sent shutdown message to the ring.\n");
 
     // Wait for all child processes to exit
     for (int i = 0; i < NUM_NODES; i++)
     {
         waitpid(node_pids[i], NULL, 0);
-        printf("Cleaned up node %d.\n", i);
+        printf("Node %d has exited.\n", i);
     }
     printf("Parent exiting.\n");
     return 0;
