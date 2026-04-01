@@ -65,6 +65,5 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
             perror("write to parent");
             exit(1); // Exit on write error
         }
-        break; // Exit after one token pass for demonstration purposes
     }
 }
