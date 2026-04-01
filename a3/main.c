@@ -110,7 +110,7 @@ int main()
                 perror("read from stat pipe");
                 exit(EXIT_FAILURE);
             }
-            sleep(5);
+            sleep(1);
         }
     }
     RingMessage shutdown_msg = make_shutdown_msg();
