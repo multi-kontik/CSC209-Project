@@ -34,6 +34,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
         }
         else if (bytes_read > 0)
         {
+            printf("Node %d received a message.\n", node_id);
             if (msg.type == MSG_SHUTDOWN)
             {
                 // Clean up and exit gracefully
@@ -53,6 +54,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                     perror("write on ring");
                     exit(1); // Exit on write error
                 }
+                printf("Node %d passed the token to the next node.\n", node_id);
             }
         }
         // Done passing the token

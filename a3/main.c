@@ -89,4 +89,5 @@ int main()
         perror("write to ring (initial token)");
         exit(EXIT_FAILURE);
     }
+    printf("Parent sent initial token to node 0.\n");
 }
