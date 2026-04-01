@@ -92,7 +92,7 @@ int main()
     printf("Parent sent initial token to node 0.\n");
 
     size_t total_reports = 0;
-    while (total_reports < NUM_NODES)
+    while (total_reports < NUM_NODES * 2)
     {
         for (int i = 0; i < NUM_NODES; i++)
         {
@@ -108,6 +108,7 @@ int main()
                 perror("read from stat pipe");
                 exit(EXIT_FAILURE);
             }
+            sleep(5);
         }
     }
 }
