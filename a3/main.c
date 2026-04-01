@@ -92,7 +92,7 @@ int main()
     printf("Parent sent initial token to node 0.\n");
 
     size_t total_reports = 0;
-    while (total_reports < NUM_NODES * 2)
+    while (total_reports < NUM_NODES * NUM_NODES)
     {
         for (int i = 0; i < NUM_NODES; i++)
         {
