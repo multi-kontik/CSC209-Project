@@ -14,6 +14,9 @@ RingMessage make_report_msg(int node_id, TaskStatus status, const char *result)
     msg.type = MSG_RESULT;   // This is a result message
     msg.sender_id = node_id; // The ID of the node sending the result
     msg.receiver_id = -1;    // Send back to parent (could be set to specific node)
+    msg.task_id = 0;         // In a real implementation, this would be set to the actual task ID
+    msg.sequence_num = 0;    // In a real implementation, this would be set to the actual sequence number
+    msg.hop_count = 0;       // Not relevant for result messages, but we can set it to 0
     msg.status = status;
     snprintf(msg.result, MAX_PAYLOAD, "%s", result);
     return msg;
@@ -29,5 +32,8 @@ RingMessage make_token_msg()
     msg.type = MSG_TOKEN; // This is a token message
     msg.sender_id = -1;   // The parent should be the sender of the token once it's created
     msg.receiver_id = -1; // Token can be processed by any node
+    msg.task_id = 0;
+    msg.sequence_num = 0;
+    msg.hop_count = 0;
     return msg;
 }

@@ -24,15 +24,15 @@ typedef enum
 
 typedef struct
 {
-    MessageType type;                // what kind of message is this?
-    int sender_id;                   // who created/sent this message?
-    int receiver_id;                 // which node should process this? (-1 = everyone)
-    int task_id = 0;                 // unique task identifier
-    int sequence_num = 0;            // order this task was sent by parent
-    int hop_count = 0;               // how many nodes has this passed through?
-    TaskStatus status;               // pending / completed / error
-    char payload[MAX_PAYLOAD] = {0}; // input data travelling TO the worker
-    char result[MAX_PAYLOAD] = {0};  // output data travelling back TO the parent
+    MessageType type;          // what kind of message is this?
+    int sender_id;             // who created/sent this message?
+    int receiver_id;           // which node should process this? (-1 = everyone)
+    int task_id;               // unique task identifier
+    int sequence_num;          // order this task was sent by parent
+    int hop_count;             // how many nodes has this passed through?
+    TaskStatus status;         // pending / completed / error
+    char payload[MAX_PAYLOAD]; // input data travelling TO the worker
+    char result[MAX_PAYLOAD];  // output data travelling back TO the parent
 } RingMessage;
 
 void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_fd);
