@@ -22,14 +22,6 @@ typedef enum
     STATUS_ERROR    // 2 - task failed, result is invalid
 } TaskStatus;
 
-typedef enum
-{
-    JOB_WORD_COUNT,  // 0 - count words in a string
-    JOB_VOWEL_COUNT, // 1 - count vowels in a string
-    JOB_REVERSE,     // 2 - reverse a string
-    JOB_PALINDROME   // 3 - check if a string is a palindrome
-} JobType;
-
 typedef struct
 {
     MessageType type;          // what kind of message is this?
@@ -38,10 +30,15 @@ typedef struct
     int task_id;               // unique task identifier
     int sequence_num;          // order this task was sent by parent
     int hop_count;             // how many nodes has this passed through?
-    JobType job_type;          // what job should the receiver perform?
-    TaskStatus status;         // pending / ok / error
+    TaskStatus status;         // pending / completed / error
     char payload[MAX_PAYLOAD]; // input data travelling TO the worker
     char result[MAX_PAYLOAD];  // output data travelling back TO the parent
 } RingMessage;
+
+void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_fd);
+
+RingMessage make_report_msg(int node_id, TaskStatus status, const char *result);
+RingMessage make_token_msg();
+RingMessage make_shutdown_msg();
 
 #endif
