@@ -85,8 +85,8 @@ int main()
 
     // Send initial token to node 0
     RingMessage token_msg = make_token_msg();
-    size_t bytes_written = write(ring_pipes[0][1], &token_msg, sizeof(RingMessage));
-    if (bytes_written == -1)
+    size_t ring_bytes = write(ring_pipes[0][1], &token_msg, sizeof(RingMessage));
+    if (ring_bytes == -1)
     {
         perror("write to ring (initial token)");
         exit(EXIT_FAILURE);
@@ -117,8 +117,8 @@ int main()
 
     // Send shutdown message to the ring
     RingMessage shutdown_msg = make_shutdown_msg();
-    size_t bytes_written = write(ring_pipes[0][1], &shutdown_msg, sizeof(RingMessage));
-    if (bytes_written == -1)
+    size_t shutdown_bytes = write(ring_pipes[0][1], &shutdown_msg, sizeof(RingMessage));
+    if (shutdown_bytes == -1)
     {
         perror("write shutdown to ring");
         exit(EXIT_FAILURE);
