@@ -37,6 +37,12 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
             printf("Node %d received a message.\n", node_id);
             if (msg.type == MSG_SHUTDOWN)
             {
+                size_t pass_shutdown_bytes = write(ring_write_fd, &msg, sizeof(RingMessage));
+                if (pass_shutdown_bytes == -1)
+                {
+                    perror("pass shutdown on ring");
+                    exit(1); // Exit on write error
+                }
                 // Clean up and exit gracefully
                 close(ring_read_fd);
                 close(ring_write_fd);
