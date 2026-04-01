@@ -37,3 +37,18 @@ RingMessage make_token_msg()
     msg.hop_count = 0;
     return msg;
 }
+
+/*
+ * Creates a shutdown message for the parent to signal nodes to terminate gracefully.
+ */
+RingMessage make_shutdown_msg()
+{
+    RingMessage msg;
+    msg.type = MSG_SHUTDOWN; // This is a shutdown message
+    msg.sender_id = -1;      // The parent should be the sender of the shutdown message
+    msg.receiver_id = -1;    // Shutdown can be processed by any node
+    msg.task_id = 0;
+    msg.sequence_num = 0;
+    msg.hop_count = 0;
+    return msg;
+}

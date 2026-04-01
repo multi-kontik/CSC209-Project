@@ -46,7 +46,6 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
             }
             else if (msg.type == MSG_TOKEN)
             {
-                sleep(5);
                 // Pass the token to the next node
                 msg.hop_count++; // Increment hop count for the token
                 size_t bytes_written = write(ring_write_fd, &msg, sizeof(RingMessage));
@@ -56,7 +55,6 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                     exit(1); // Exit on write error
                 }
                 printf("Node %d passed the token to the next node.\n", node_id);
-                sleep(5);
             }
         }
         // Done passing the token

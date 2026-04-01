@@ -39,5 +39,6 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
 
 RingMessage make_report_msg(int node_id, TaskStatus status, const char *result);
 RingMessage make_token_msg();
+RingMessage make_shutdown_msg();
 
 #endif

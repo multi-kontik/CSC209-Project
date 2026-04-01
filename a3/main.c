@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include "ring.h"
 
 #define NUM_NODES 5
@@ -10,6 +11,7 @@ int main()
 {
     int ring_pipes[NUM_NODES][2]; // Pipes for communication between nodes
     int stat_pipes[NUM_NODES][2]; // Pipes nodes use to send results back to parent
+    pid_t node_pids[NUM_NODES];   // Store PIDs of child nodes for cleanup
 
     // Create pipes for each node
     for (int i = 0; i < NUM_NODES; i++)
@@ -29,13 +31,13 @@ int main()
     // Fork child processes for each node
     for (int i = 0; i < NUM_NODES; i++)
     {
-        pid_t pid = fork();
-        if (pid == -1)
+        node_pids[i] = fork();
+        if (node_pids[i] == -1)
         {
             perror("fork");
             exit(EXIT_FAILURE);
         }
-        else if (pid == 0)
+        else if (node_pids[i] == 0)
         {
             // Child node i
 
@@ -92,7 +94,7 @@ int main()
     printf("Parent sent initial token to node 0.\n");
 
     size_t total_reports = 0;
-    while (total_reports < NUM_NODES * NUM_NODES)
+    while (total_reports < NUM_NODES * 2)
     {
         for (int i = 0; i < NUM_NODES; i++)
         {
@@ -111,4 +113,24 @@ int main()
             sleep(5);
         }
     }
+    RingMessage shutdown_msg = make_shutdown_msg();
+    for (int i = 0; i < NUM_NODES; i++)
+    {
+        size_t bytes_written = write(ring_pipes[i][1], &shutdown_msg, sizeof(RingMessage));
+        if (bytes_written == -1)
+        {
+            perror("write shutdown to ring");
+            exit(EXIT_FAILURE);
+        }
+    }
+    printf("Parent sent shutdown message to all nodes.\n");
+
+    // Wait for all child processes to exit
+    for (int i = 0; i < NUM_NODES; i++)
+    {
+        waitpid(node_pids[i], NULL, 0);
+        printf("Cleaned up node %d.\n", i);
+    }
+    printf("Parent exiting.\n");
+    return 0;
 }
