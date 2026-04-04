@@ -53,7 +53,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
             }
             else if (msg.type == MSG_TOKEN || (msg.type == MSG_DATA && msg.receiver_id != node_id))
             {
-		// If it is a free token or a task token (e.g. word count) for a different node
+                // If it is a free token or a task token (e.g. word count) for a different node
                 // Pass the token to the next node
                 msg.hop_count++; // Increment hop count for the token
                 size_t bytes_written = write(ring_write_fd, &msg, sizeof(RingMessage));
@@ -65,27 +65,28 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 printf("Node %d passed the token to the next node.\n", node_id);
                 sleep(1);
             }
-	    else if (msg.type == MSG_DATA)
-	    {
-		// Per above, we know that this <msg> is meant for this <node_id>
+            else if (msg.type == MSG_DATA)
+            {
+                // Per above, we know that this <msg> is meant for this <node_id>
 
-		// Find and perform the task
-		char *result = task(msg);
+                // Find and perform the task
+                char *result = task(msg);
 
-		// Error checking
-		if (result == NULL) {
-		    printf("Node %d task unsuccessful.\n", node_id);
-		    // msg.status = STATUS_ERROR;
-		}
+                // Error checking
+                if (result == NULL)
+                {
+                    printf("Node %d task unsuccessful.\n", node_id);
+                    // msg.status = STATUS_ERROR;
+                }
 
-		// Store task return value (i.e. <result>) into the <msg>
-		strncpy(msg.result, result, MAX_PAYLOAD);
-		msg.result[MAX_PAYLOAD - 1] = '\0';
-		free(result);
+                // Store task return value (i.e. <result>) into the <msg>
+                strncpy(msg.result, result, MAX_PAYLOAD);
+                msg.result[MAX_PAYLOAD - 1] = '\0';
+                free(result);
 
-		// msg.type = MSG_RESULT;
-		// msg.status = STATUS_OK;
-	    }
+                // msg.type = MSG_RESULT;
+                // msg.status = STATUS_OK;
+            }
         }
         // Done passing the token
         char result_msg[MAX_PAYLOAD];

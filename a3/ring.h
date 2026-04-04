@@ -28,7 +28,7 @@ typedef enum
     TASK_LONGEST_SENTENCE_LENGTH,
     TASK_AVERAGE_SENTENCE_LENGTH,
     TASK_LONGEST_WORD,
-    TASK_AVERAGE_WORD_LENGTH, 
+    TASK_AVERAGE_WORD_LENGTH,
     TASK_SENTENCE_COUNT,
     TASK_SECTION_COUNT,
     TASK_CHARACTER_COUNT
@@ -53,6 +53,6 @@ RingMessage make_report_msg(int node_id, TaskStatus status, const char *result);
 RingMessage make_token_msg();
 RingMessage make_shutdown_msg();
 
-char* task(RingMessage rm);
+char *task(RingMessage rm);
 
 #endif
