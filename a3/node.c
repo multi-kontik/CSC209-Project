@@ -66,7 +66,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                     exit(1); // Exit on write error
                 }
                 printf("Node %d passed the token to the next node.\n", node_id);
-                snpritf(result, MAX_PAYLOAD, "Node %d passed the token.", node_id);
+                snprintf(result, MAX_PAYLOAD, "Node %d passed the token.", node_id);
                 sleep(1);
             }
             else if (msg.type == MSG_DATA && msg.receiver_id != node_id)
