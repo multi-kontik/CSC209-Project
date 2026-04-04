@@ -17,6 +17,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
     printf("Node %d created.\n", node_id);
 
     RingMessage msg;
+    char *result;
     while (1)
     {
         // Check for control messages from the parent
@@ -41,6 +42,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 size_t pass_shutdown_bytes = write(ring_write_fd, &msg, sizeof(RingMessage));
                 if (pass_shutdown_bytes == -1)
                 {
+                    printf("Node %d failed to pass the shutdown message.\n", node_id);
                     perror("pass shutdown on ring");
                     exit(1); // Exit on write error
                 }
@@ -51,52 +53,67 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 printf("Node %d shutting down.\n", node_id);
                 exit(0);
             }
-            else if (msg.type == MSG_TOKEN || (msg.type == MSG_DATA && msg.receiver_id != node_id))
+            else if (msg.type == MSG_TOKEN)
             {
-                // If it is a free token or a task token (e.g. word count) for a different node
+                // If it is a free token
                 // Pass the token to the next node
                 msg.hop_count++; // Increment hop count for the token
                 size_t bytes_written = write(ring_write_fd, &msg, sizeof(RingMessage));
                 if (bytes_written == -1)
                 {
+                    printf("Node %d failed to pass the token.\n", node_id);
                     perror("write on ring");
                     exit(1); // Exit on write error
                 }
                 printf("Node %d passed the token to the next node.\n", node_id);
+                snpritf(result, MAX_PAYLOAD, "Node %d passed the token.", node_id);
                 sleep(1);
             }
-            else if (msg.type == MSG_DATA)
+            else if (msg.type == MSG_DATA && msg.receiver_id != node_id)
             {
-                // Per above, we know that this <msg> is meant for this <node_id>
+                // If it is a task message for a different node, we should still pass it along
+                msg.hop_count++; // Increment hop count for the message
+                size_t bytes_written = write(ring_write_fd, &msg, sizeof(RingMessage));
+                if (bytes_written == -1)
+                {
+                    printf("Node %d failed to pass the task message.\n", node_id);
+                    perror("write on ring");
+                    exit(1); // Exit on write error
+                }
+                printf("Node %d passed the task message to the next node.\n", node_id);
+                sleep(1);
+            }
+            else if (msg.type == MSG_DATA && msg.receiver_id == node_id)
+            {
+                // If it is a task message for this node, process the task
+                printf("Node %d has received a task and it's processing it.\n", node_id);
 
                 // Find and perform the task
-                char *result = task(msg);
+                result = task(msg);
 
                 // Error checking
                 if (result == NULL)
                 {
-                    printf("Node %d task unsuccessful.\n", node_id);
-                    // msg.status = STATUS_ERROR;
+                    snprintf(result, MAX_PAYLOAD, "Node %d failed to process the task.", node_id);
+                    msg.status = STATUS_ERROR;
                 }
-
-                // Store task return value (i.e. <result>) into the <msg>
-                strncpy(msg.result, result, MAX_PAYLOAD);
-                msg.result[MAX_PAYLOAD - 1] = '\0';
-                free(result);
-
-                // msg.type = MSG_RESULT;
-                // msg.status = STATUS_OK;
+                else
+                {
+                    msg.status = STATUS_OK;
+                }
             }
-        }
-        // Done passing the token
-        char result_msg[MAX_PAYLOAD];
-        snprintf(result_msg, MAX_PAYLOAD, "Node %d passed the token successfully.", node_id);
-        RingMessage msg_to_parent = make_report_msg(node_id, STATUS_OK, result_msg);
-        size_t bytes_written = write(stat_write_fd, &msg_to_parent, sizeof(RingMessage));
-        if (bytes_written == -1)
-        {
-            perror("write to parent");
-            exit(1); // Exit on write error
+
+            // Send the result back to the parent
+            RingMessage report_msg = make_report_msg(node_id, msg.status, result);
+            size_t stat_bytes_written = write(stat_write_fd, &report_msg, sizeof(RingMessage));
+            if (stat_bytes_written == -1)
+            {
+                printf("Node %d failed to send the report to the parent.\n", node_id);
+                perror("write on stat pipe");
+                exit(1); // Exit on write error
+            }
+            printf("Node %d sent the report back to the parent.\n", node_id);
+            sleep(1);
         }
     }
 }

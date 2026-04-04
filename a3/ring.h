@@ -10,9 +10,7 @@ typedef enum
     MSG_TOKEN,   // 0 - free token, no data
     MSG_DATA,    // 1 - task travelling to a specific node
     MSG_RESULT,  // 2 - node sending result to parent
-    MSG_ACK,     // 3 - task completed successfully
-    MSG_NACK,    // 4 - task failed or not claimed
-    MSG_SHUTDOWN // 5 - terminate gracefully
+    MSG_SHUTDOWN // 3 - terminate gracefully
 } MessageType;
 
 typedef enum
