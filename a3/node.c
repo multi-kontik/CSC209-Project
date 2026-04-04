@@ -40,6 +40,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
             if (msg.type == MSG_SHUTDOWN)
             {
                 size_t pass_shutdown_bytes = write(ring_write_fd, &msg, sizeof(RingMessage));
+                printf("Node %d received shutdown message and is passing it to the next node.\n", node_id);
                 if (pass_shutdown_bytes == -1)
                 {
                     printf("Node %d failed to pass the shutdown message.\n", node_id);
