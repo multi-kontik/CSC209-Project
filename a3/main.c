@@ -95,7 +95,7 @@ int main()
 
     // Collect reports
     size_t total_reports = 0;
-    while (total_reports < NUM_NODES * 2)
+    while (total_reports < NUM_NODES)
     {
         for (int i = 0; i < NUM_NODES; i++)
         {
