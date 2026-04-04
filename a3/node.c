@@ -50,7 +50,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 close(ring_read_fd);
                 close(ring_write_fd);
                 close(stat_write_fd);
-                snprintf(result, MAX_PAYLOAD, "Node %d is shutting down.", node_id);
+                printf("Node %d shutting down.\n", node_id);
                 exit(0);
             }
             else if (msg.type == MSG_TOKEN)
