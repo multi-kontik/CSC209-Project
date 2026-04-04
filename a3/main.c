@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 #include "ring.h"
 
-#define NUM_NODES 5
+#define NUM_NODES 8
 
 int main()
 {
