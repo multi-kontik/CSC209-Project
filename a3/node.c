@@ -101,6 +101,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 {
                     msg.status = STATUS_OK;
                 }
+                sleep(1);
             }
 
             // Send the result back to the parent

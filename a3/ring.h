@@ -1,7 +1,7 @@
 #ifndef RING_H
 #define RING_H
 
-#define MAX_NODES 6
+#define MAX_NODES 8
 #define MAX_PAYLOAD 256
 #define MAX_FACTORS 64
 
