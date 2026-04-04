@@ -22,6 +22,18 @@ typedef enum
     STATUS_ERROR    // 2 - task failed, result is invalid
 } TaskStatus;
 
+typedef enum
+{
+    TASK_WORD_COUNT,
+    TASK_LONGEST_SENTENCE_LENGTH,
+    TASK_AVERAGE_SENTENCE_LENGTH,
+    TASK_LONGEST_WORD,
+    TASK_AVERAGE_WORD_LENGTH, 
+    TASK_SENTENCE_COUNT,
+    TASK_SECTION_COUNT,
+    TASK_CHARACTER_COUNT
+} TaskType;
+
 typedef struct
 {
     MessageType type;          // what kind of message is this?

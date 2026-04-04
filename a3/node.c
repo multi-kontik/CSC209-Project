@@ -5,6 +5,52 @@
 #include "ring.h"
 
 /*
+ * Find the correct task function, all of which takes in FILE * and outputs char[].
+ * @node_id: The ID of this node, used to find the correct task function.
+ */
+
+char * (*find_task(int node_id))(FILE **)
+{
+    char * task_func(FILE **);
+
+    // Find task function
+    // See https://www.w3schools.com/c/c_switch.php
+    switch (node_id)
+    {
+	case TASK_WORD_COUNT:
+	    task_func = word_count;
+	    break;
+	case TASK_AVERAGE_SENTENCE_LENGTH:
+	    task_func = average_sentence_length;
+	    break;
+	case TASK_LONGEST_SENTENCE_LENGTH:
+	    task_func = longest_sentence;
+	    break;
+	case TASK_LONGEST_WORD:
+	    task_func = longest_word;
+	    break;
+	case TASK_AVERAGE_WORD_LENGTH;
+	    task_func = average_word_length;
+	    break;
+	case TASK_SENTENCE_COUNT:
+	    task_func = sentence_count;
+	    break;
+	case TASK_SECTION_COUNT:
+	    task_func = section_count;
+	    break;
+	case TASK_CHARACTER_COUNT:
+	    task_func = character_count;
+	    break;
+	default:
+	    fprintf(stderr, "Invalid node_id");
+	    exit(1);
+    }
+
+    return task_func;
+}
+
+
+/*
  * Runs the node process: pass the token, process tasks, and send results back to the parent.
  * @node_id: The ID of this node
  * @ring_read_fd: File descriptor for reading from the ring
@@ -50,8 +96,9 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 printf("Node %d shutting down.\n", node_id);
                 exit(0);
             }
-            else if (msg.type == MSG_TOKEN)
+            else if (msg.type == MSG_TOKEN || (msg.type == MSG_DATA && msg.received_id != node_id))
             {
+		// If it is a free token or a task token (e.g. word count) for a different node
                 // Pass the token to the next node
                 msg.hop_count++; // Increment hop count for the token
                 size_t bytes_written = write(ring_write_fd, &msg, sizeof(RingMessage));
@@ -63,6 +110,28 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 printf("Node %d passed the token to the next node.\n", node_id);
                 sleep(1);
             }
+	    else if (msg.type == MSG_DATA)
+	    {
+		// Per above, we know that this <msg> is meant for this <node_id>
+
+		// Find the task (as a function pointer) based on <node_id>
+		char * task_func(FILE *) = find_task(node_id);
+		char *result = task(msg.payload, task_func);
+
+		// Error checking
+		if (result == NULL) {
+		    printf("Node %d task unsuccessful.\n", node_id);
+		    // msg.status = STATUS_ERROR;
+		}
+
+		// Store task return value (i.e. <result>) into the <msg>
+		strncpy(msg.result, result, MAX_PAYLOAD);
+		msg.result[MAX_PAYLOAD - 1] = '\0';
+		free(result);
+
+		// msg.type = MSG_RESULT;
+		// msg.status = STATUS_OK;
+	    }
         }
         // Done passing the token
         char result_msg[MAX_PAYLOAD];
