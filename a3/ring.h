@@ -53,4 +53,6 @@ RingMessage make_report_msg(int node_id, TaskStatus status, const char *result);
 RingMessage make_token_msg();
 RingMessage make_shutdown_msg();
 
+char* task(RingMessage rm);
+
 #endif

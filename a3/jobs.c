@@ -327,6 +327,8 @@ char* average_word_length(FILE **file_ptr_ptr) {
 }
 
 char* section_count(FILE **file_ptr_ptr) {
+    FILE *file_ptr = *file_ptr_ptr;
+
     int c = fgetc(file_ptr);
     if (c == EOF) {
 	// i.e. If the file is empty
@@ -349,7 +351,6 @@ char* section_count(FILE **file_ptr_ptr) {
     //  then the entire document will constitute one section (and so on)
     int num_sections = 1; 
 
-    FILE *file_ptr = *file_ptr_ptr;
     char sentence[MAX_PAYLOAD + 1];
 
     while (!feof(file_ptr)) {
@@ -423,12 +424,58 @@ char* character_count(FILE **file_ptr_ptr) {
     return result;
 }
 
-char* task(char file_name[], char * (*task)(FILE **)) {
-    FILE *file_ptr = fopen(file_name, "r");
+/*
+ * Find the correct task function, all of which takes in FILE * and outputs char[].
+ * @node_id: The ID of this node, used to find the correct task function.
+ */
+
+char* (*find_task(int node_id))(FILE **) {
+    char* (*task_func)(FILE **);
+
+    // Find task function
+    // See https://www.w3schools.com/c/c_switch.php
+    switch (node_id) {
+	case TASK_WORD_COUNT:
+	    task_func = word_count;
+	    break;
+	case TASK_AVERAGE_SENTENCE_LENGTH:
+	    task_func = average_sentence_length;
+	    break;
+	case TASK_LONGEST_SENTENCE_LENGTH:
+	    task_func = longest_sentence;
+	    break;
+	case TASK_LONGEST_WORD:
+	    task_func = longest_word;
+	    break;
+	case TASK_AVERAGE_WORD_LENGTH:
+	    task_func = average_word_length;
+	    break;
+	case TASK_SENTENCE_COUNT:
+	    task_func = sentence_count;
+	    break;
+	case TASK_SECTION_COUNT:
+	    task_func = section_count;
+	    break;
+	case TASK_CHARACTER_COUNT:
+	    task_func = character_count;
+	    break;
+	default:
+	    fprintf(stderr, "Invalid node_id");
+	    exit(1);
+    }
+
+    return task_func;
+}
+
+char* task(RingMessage rm) {
+    FILE *file_ptr = fopen(rm.payload, "r");
     if (file_ptr == NULL) {
 	fprintf(stderr, "fopen error");
 	exit(1);
     }
+
+    // Find task
+    char* (*task)(FILE **) = find_task(rm.receiver_id);
 
     // Do task and store results in ret; close file
     char *ret = task(&file_ptr);
