@@ -39,7 +39,7 @@ char* word_count(FILE **file_ptr_ptr) {
 	if (fscanf(file_ptr, "%255s", word) != 1) {
 	    // We know it is an error, since we already checked for EOF above
 	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    return NULL;
 	} else {
 	    num_words++;
 	}
@@ -83,8 +83,8 @@ char* sentence_count(FILE **file_ptr_ptr) {
     while (!feof(file_ptr)) {
 	if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL) {
 	    // We know it is an error, since we already checked for EOF above
-	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    fprintf(stderr, "fgets error");
+	    return NULL;
 	} else if (sentence[0] != '\n') {
 	    // Do *not* increment based on empty sentences
 	    num_sentences++;
@@ -129,8 +129,8 @@ char* longest_sentence(FILE **file_ptr_ptr) {
     while (!feof(file_ptr)) {
 	if (fgets(curr_sentence, MAX_PAYLOAD + 1, file_ptr) == NULL) {
 	    // We know it is an error, since we already checked for EOF above
-	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    fprintf(stderr, "fgets error");
+	    return NULL;
 	} else {
 	    int curr_sentence_length = strlen(curr_sentence);
 
@@ -181,7 +181,7 @@ char* longest_word(FILE **file_ptr_ptr) {
 	if (fscanf(file_ptr, "%255s", curr_word) != 1) {
 	    // We know it is an error, since we already checked for EOF above
 	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    return NULL;
 	} else {
 	    int curr_word_length = strlen(curr_word);
 
@@ -245,8 +245,8 @@ char* average_sentence_length(FILE **file_ptr_ptr) {
     while (!feof(file_ptr)) {
 	if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL) {
 	    // We know it is an error, since we already checked for EOF above
-	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    fprintf(stderr, "fgets error");
+	    return NULL;
 	} else if (sentence[0] != '\n') {
 	    // Sentence non-empty
 	    word_count = word_count + (num_spaces_in_line(sentence) + 1);
@@ -309,8 +309,8 @@ char* average_word_length(FILE **file_ptr_ptr) {
     while (!feof(file_ptr)) {
 	if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL) {
 	    // We know it is an error, since we already checked for EOF above
-	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    fprintf(stderr, "fgets error");
+	    return NULL;
 	} else {
 	    word_count = word_count + (num_spaces_in_line(sentence) + 1);
 	    total_word_chars += char_count_in_line(sentence);
@@ -358,8 +358,8 @@ char* section_count(FILE **file_ptr_ptr) {
     while (!feof(file_ptr)) {
 	if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL) {
 	    // We know it is an error, since we already checked for EOF above
-	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    fprintf(stderr, "fgets error");
+	    return NULL;
 	} else if (sentence[0] == '\n') {
 	    // Empty line, increment section count by one
 	    num_sections++;
@@ -403,8 +403,8 @@ char* character_count(FILE **file_ptr_ptr) {
     while (!feof(file_ptr)) {
 	if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL) {
 	    // We know it is an error, since we already checked for EOF above
-	    fprintf(stderr, "fscanf error");
-	    exit(1);
+	    fprintf(stderr, "fgets error");
+	    return NULL;
 	} else {
 	    // Subtract one per line for the trailing new-line character
 	    // Since the last line may not have such a character, we add one back below
