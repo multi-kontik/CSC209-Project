@@ -85,7 +85,8 @@ char* sentence_count(FILE **file_ptr_ptr) {
 	    // We know it is an error, since we already checked for EOF above
 	    fprintf(stderr, "fscanf error");
 	    exit(1);
-	} else {
+	} else if (sentence[0] != '\n') {
+	    // Do *not* increment based on empty sentences
 	    num_sentences++;
 	}
     }
@@ -246,7 +247,8 @@ char* average_sentence_length(FILE **file_ptr_ptr) {
 	    // We know it is an error, since we already checked for EOF above
 	    fprintf(stderr, "fscanf error");
 	    exit(1);
-	} else {
+	} else if (sentence[0] != '\n') {
+	    // Sentence non-empty
 	    word_count = word_count + (num_spaces_in_line(sentence) + 1);
 	    sentence_count++;
 	}
@@ -405,8 +407,7 @@ char* character_count(FILE **file_ptr_ptr) {
 	    exit(1);
 	} else {
 	    // Subtract one per line for the trailing new-line character
-	    // If the last line (sentence) lacks a trailing newline, 
-	    //  then we add it back below
+	    // Since the last line may not have such a character, we add one back below
 	    total_length = total_length + strlen(sentence) - 1;
 	}
     }
