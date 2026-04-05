@@ -102,20 +102,19 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 {
                     msg.status = STATUS_OK;
                 }
+
+                // Send the report back to the parent
+                RingMessage report_msg = make_report_msg(node_id, msg.task_id, msg.sequence_num, msg.status, result);
+                size_t stat_bytes_written = write(stat_write_fd, &report_msg, sizeof(RingMessage));
+                if (stat_bytes_written == -1)
+                {
+                    printf("Node %d failed to send the report to the parent.\n", node_id);
+                    perror("write on stat pipe");
+                    exit(1); // Exit on write error
+                }
+                printf("Node %d sent the report back to the parent.\n", node_id);
                 sleep(1);
             }
-
-            // Send the result back to the parent
-            RingMessage report_msg = make_report_msg(node_id, msg.status, result);
-            size_t stat_bytes_written = write(stat_write_fd, &report_msg, sizeof(RingMessage));
-            if (stat_bytes_written == -1)
-            {
-                printf("Node %d failed to send the report to the parent.\n", node_id);
-                perror("write on stat pipe");
-                exit(1); // Exit on write error
-            }
-            printf("Node %d sent the report back to the parent.\n", node_id);
-            sleep(1);
         }
     }
 }

@@ -1,0 +1,7 @@
+Systems programming is the practice of writing software that provides services to other software.
+Operating systems manage hardware resources and provide abstractions for applications.
+Pipes allow interprocess communication between related processes on the same machine.
+
+Processes can be created using the fork system call which duplicates the calling process.
+The parent process can communicate with child processes through file descriptors.
+Each pipe has a read end and a write end for unidirectional data flow.

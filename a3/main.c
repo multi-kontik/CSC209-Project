@@ -7,8 +7,15 @@
 
 #define NUM_NODES 8
 
-int main()
+int main(int argc, char *argv[])
 {
+    // Require at least one input file path on the command line
+    if (argc < 2)
+    {
+        fprintf(stderr, "Usage: %s <file1> [file2] ...\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
     int ring_pipes[NUM_NODES][2]; // Pipes for communication between nodes
     int stat_pipes[NUM_NODES][2]; // Pipes nodes use to send results back to parent
     pid_t node_pids[NUM_NODES];   // Store PIDs of child nodes for cleanup
@@ -83,48 +90,19 @@ int main()
         close(stat_pipes[i][1]); // parent only reads from stat pipes
     }
 
-    // Send initial token to node 0
-    RingMessage token_msg = make_token_msg();
-    size_t ring_bytes = write(ring_pipes[0][1], &token_msg, sizeof(RingMessage));
-    if (ring_bytes == -1)
+    // Run parent orchestration (inject tasks, collect results, send shutdown)
+    int stat_read_fds[NUM_NODES];
+    for (int i = 0; i < NUM_NODES; i++)
     {
-        perror("write to ring (initial token)");
-        exit(EXIT_FAILURE);
+        stat_read_fds[i] = stat_pipes[i][0];
     }
-    printf("Parent sent initial token to node 0.\n");
+    run_parent(ring_pipes[0][1], stat_read_fds, NUM_NODES, (const char **)&argv[1], argc - 1);
 
-    // Collect reports
-    size_t total_reports = 0;
-    while (total_reports < NUM_NODES)
+    // Close stat pipe read ends
+    for (int i = 0; i < NUM_NODES; i++)
     {
-        for (int i = 0; i < NUM_NODES; i++)
-        {
-            RingMessage report_msg;
-            ssize_t bytes_read = read(stat_pipes[i][0], &report_msg, sizeof(RingMessage));
-            if (bytes_read > 0)
-            {
-                printf("Parent received report from node %d: %s\n", report_msg.sender_id, report_msg.result);
-                total_reports++;
-            }
-            else if (bytes_read == -1 && errno != EAGAIN)
-            {
-                perror("read from stat pipe");
-                exit(EXIT_FAILURE);
-            }
-            sleep(1);
-        }
+        close(stat_pipes[i][0]);
     }
-
-    // Send shutdown message to the ring
-    RingMessage shutdown_msg = make_shutdown_msg();
-    size_t shutdown_bytes = write(ring_pipes[0][1], &shutdown_msg, sizeof(RingMessage));
-    if (shutdown_bytes == -1)
-    {
-        perror("write shutdown to ring");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("Parent sent shutdown message to the ring.\n");
 
     // Wait for all child processes to exit
     for (int i = 0; i < NUM_NODES; i++)

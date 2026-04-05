@@ -47,10 +47,14 @@ typedef struct
 
 void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_fd);
 
-RingMessage make_report_msg(int node_id, TaskStatus status, const char *result);
+RingMessage make_report_msg(int node_id, int task_id, int sequence_num, TaskStatus status, const char *result);
 RingMessage make_token_msg();
 RingMessage make_shutdown_msg();
+RingMessage make_data_msg(int receiver_id, int task_id, int sequence_num, const char *filepath);
 
 char *task(RingMessage rm);
+
+// Parent orchestration (parent.c)
+void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const char *file_paths[], int num_files);
 
 #endif

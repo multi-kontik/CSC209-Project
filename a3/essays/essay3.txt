@@ -1,0 +1,7 @@
+Computer science students learn about algorithms and data structures in their courses.
+Trees and graphs are fundamental data structures used in many applications.
+Sorting algorithms include quicksort mergesort and heapsort among others.
+
+Networks connect computers together allowing them to share information and resources.
+The internet is a global network that uses standardized protocols for communication.
+Security is an important consideration when designing distributed systems today.
