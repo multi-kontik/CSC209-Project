@@ -36,7 +36,6 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
         }
         else if (bytes_read > 0)
         {
-            printf("Node %d received a message.\n", node_id);
             if (msg.type == MSG_SHUTDOWN)
             {
                 size_t pass_shutdown_bytes = write(ring_write_fd, &msg, sizeof(RingMessage));
@@ -57,6 +56,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
             else if (msg.type == MSG_TOKEN)
             {
                 // If it is a free token
+                printf("Node %d received a token.\n", node_id);
                 // Pass the token to the next node
                 msg.hop_count++; // Increment hop count for the token
                 size_t bytes_written = write(ring_write_fd, &msg, sizeof(RingMessage));
