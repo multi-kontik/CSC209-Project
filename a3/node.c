@@ -91,7 +91,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
 
                 // Find and perform the task
                 result = task(msg);
-
+                printf("got the result: %s\n", result);
                 // Error checking
                 if (result == NULL)
                 {
