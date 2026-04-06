@@ -90,17 +90,16 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 printf("Node %d has received a task and it's processing it.\n", node_id);
 
                 // Find and perform the task
-                result = task(msg);
-                printf("got the result: %s\n", result);
+                char *ret = task(msg);
                 // Error checking
                 if (result == NULL)
                 {
-                    printf("Node %d failed to process the task.\n", node_id);
                     snprintf(result, MAX_PAYLOAD, "Node %d failed to process the task.", node_id);
                     msg.status = STATUS_ERROR;
                 }
                 else
                 {
+                    snprintf(result, MAX_PAYLOAD, "%s", ret);
                     msg.status = STATUS_OK;
                 }
 
