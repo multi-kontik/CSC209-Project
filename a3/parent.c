@@ -61,22 +61,22 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
         }
     }
 
-    // Send initial token to the ring
-    RingMessage token = make_token_msg();
-    size_t bytes = write(ring_write_fd, &token, sizeof(RingMessage));
-    if (bytes == -1)
-    {
-        perror("write token to ring");
-        exit(EXIT_FAILURE);
-    }
-    printf("Parent sent initial token to ring.\n");
+    // // Send initial token to the ring
+    // RingMessage token = make_token_msg();
+    // size_t bytes = write(ring_write_fd, &token, sizeof(RingMessage));
+    // if (bytes == -1)
+    // {
+    //     perror("write token to ring");
+    //     exit(EXIT_FAILURE);
+    // }
+    // printf("Parent sent initial token to ring.\n");
 
     // Inject all DATA messages into the ring
     for (int i = 0; i < total_tasks; i++)
     {
         RingMessage data = make_data_msg(tasks[i].receiver_id, tasks[i].task_id,
                                          tasks[i].sequence_num, tasks[i].filepath);
-        bytes = write(ring_write_fd, &data, sizeof(RingMessage));
+        size_t bytes = write(ring_write_fd, &data, sizeof(RingMessage));
         if (bytes == -1)
         {
             perror("write data to ring");
@@ -162,7 +162,7 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
 
     // Send shutdown message to the ring
     RingMessage shutdown = make_shutdown_msg();
-    bytes = write(ring_write_fd, &shutdown, sizeof(RingMessage));
+    size_t bytes = write(ring_write_fd, &shutdown, sizeof(RingMessage));
     if (bytes == -1)
     {
         perror("write shutdown to ring");
