@@ -108,19 +108,6 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
             {
                 printf("Parent received an error report for task %d from node %d: %s\n",
                        result_msg.task_id, result_msg.sender_id, result_msg.result);
-                // Send shutdown message to the ring
-                RingMessage shutdown = make_shutdown_msg();
-                size_t bytes = write(ring_write_fd, &shutdown, sizeof(RingMessage));
-                if (bytes == -1)
-                {
-                    perror("write shutdown to ring");
-                    exit(EXIT_FAILURE);
-                }
-                printf("Parent sent shutdown to ring.\n");
-
-                // Close parent's write end
-                close(ring_write_fd);
-                return; // Exit early on error report
             }
 
             // Match the report back to its task by sequence_num
