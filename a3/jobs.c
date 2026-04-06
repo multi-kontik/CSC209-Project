@@ -562,7 +562,7 @@ char *task(RingMessage rm)
 	if (file_ptr == NULL)
 	{
 		fprintf(stderr, "fopen error: could not open file or file does not exist: %s\n", rm.payload);
-		return NULL;
+		exit(1);
 	}
 	else
 	{
