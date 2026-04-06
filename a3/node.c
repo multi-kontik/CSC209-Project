@@ -106,6 +106,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 // Send the report back to the parent
                 RingMessage report_msg = make_report_msg(node_id, msg.task_id, msg.sequence_num, msg.status, result);
                 size_t stat_bytes_written = write(stat_write_fd, &report_msg, sizeof(RingMessage));
+                printf("Node %d write to stat pipe returned %ld bytes.\n", node_id, stat_bytes_written);
                 if (stat_bytes_written == -1)
                 {
                     printf("Node %d failed to send the report to the parent.\n", node_id);
