@@ -87,7 +87,7 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
     }
 
     // Collect results: each node sends exactly num_files reports
-    int results_collected = 0;
+    int completed_tasks = 0;
     for (int n = 0; n < num_nodes; n++)
     {
         for (int r = 0; r < num_files; r++)
@@ -109,6 +109,10 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
                 printf("Parent received an error report for task %d from node %d: %s\n",
                        result_msg.task_id, result_msg.sender_id, result_msg.result);
             }
+            else
+            {
+                completed_tasks++;
+            }
 
             // Match the report back to its task by sequence_num
             for (int t = 0; t < total_tasks; t++)
@@ -118,7 +122,6 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
                     tasks[t].status = result_msg.status;
                     strncpy(tasks[t].result, result_msg.result, MAX_PAYLOAD);
                     tasks[t].result[MAX_PAYLOAD - 1] = '\0';
-                    results_collected++;
                     printf("Parent got result for task %d from node %d: %s\n",
                            tasks[t].task_id, result_msg.sender_id, tasks[t].result);
                     break;
@@ -163,7 +166,7 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
 
     // ACK/NACK accounting for the report
     printf("\nACK: %d/%d tasks completed successfully.\n",
-           results_collected, total_tasks);
+           completed_tasks, total_tasks);
 
     // Send shutdown message to the ring
     RingMessage shutdown = make_shutdown_msg();
