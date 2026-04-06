@@ -113,6 +113,9 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                     exit(1); // Exit on write error
                 }
                 printf("Node %d sent the report back to the parent.\n", node_id);
+                printf("Report message details: task_id=%d, sequence_num=%d, status=%s, result=%s\n",
+                       report_msg.task_id, report_msg.sequence_num,
+                       (report_msg.status == STATUS_OK) ? "OK" : "ERROR", report_msg.result);
                 sleep(1);
             }
         }
