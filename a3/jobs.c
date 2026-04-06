@@ -561,8 +561,8 @@ char *task(RingMessage rm)
 	FILE *file_ptr = fopen(rm.payload, "r");
 	if (file_ptr == NULL)
 	{
-		fprintf(stderr, "fopen error: could not open file or file does not exist %s\n", rm.payload);
-		exit(1);
+		fprintf(stderr, "fopen error: could not open file or file does not exist: %s\n", rm.payload);
+		return NULL;
 	}
 
 	// Find task
@@ -573,7 +573,7 @@ char *task(RingMessage rm)
 	if (fclose(file_ptr) == -1)
 	{
 		fprintf(stderr, "fclose error on file %s\n", rm.payload);
-		exit(1);
+		return NULL;
 	}
 	return ret;
 }
