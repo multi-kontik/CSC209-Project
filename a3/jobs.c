@@ -96,7 +96,7 @@ char *sentence_count(FILE **file_ptr_ptr)
 
 	while (!feof(file_ptr))
 	{
-		if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL)
+		if (fgets(sentence, MAX_PAYLOAD, file_ptr) == NULL)
 		{
 			// We know it is an error, since we already checked for EOF above
 			fprintf(stderr, "fgets error");
@@ -151,7 +151,7 @@ char *longest_sentence(FILE **file_ptr_ptr)
 
 	while (!feof(file_ptr))
 	{
-		if (fgets(curr_sentence, MAX_PAYLOAD + 1, file_ptr) == NULL)
+		if (fgets(curr_sentence, MAX_PAYLOAD, file_ptr) == NULL)
 		{
 			// We know it is an error, since we already checked for EOF above
 			fprintf(stderr, "fgets error");
@@ -292,7 +292,7 @@ char *average_sentence_length(FILE **file_ptr_ptr)
 
 	while (!feof(file_ptr))
 	{
-		if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL)
+		if (fgets(sentence, MAX_PAYLOAD, file_ptr) == NULL)
 		{
 			// We know it is an error, since we already checked for EOF above
 			fprintf(stderr, "fgets error");
@@ -369,7 +369,7 @@ char *average_word_length(FILE **file_ptr_ptr)
 
 	while (!feof(file_ptr))
 	{
-		if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL)
+		if (fgets(sentence, MAX_PAYLOAD, file_ptr) == NULL)
 		{
 			// We know it is an error, since we already checked for EOF above
 			fprintf(stderr, "fgets error");
@@ -428,7 +428,7 @@ char *section_count(FILE **file_ptr_ptr)
 
 	while (!feof(file_ptr))
 	{
-		if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL)
+		if (fgets(sentence, MAX_PAYLOAD, file_ptr) == NULL)
 		{
 			// We know it is an error, since we already checked for EOF above
 			fprintf(stderr, "fgets error");
@@ -483,7 +483,7 @@ char *character_count(FILE **file_ptr_ptr)
 
 	while (!feof(file_ptr))
 	{
-		if (fgets(sentence, MAX_PAYLOAD + 1, file_ptr) == NULL)
+		if (fgets(sentence, MAX_PAYLOAD, file_ptr) == NULL)
 		{
 			// We know it is an error, since we already checked for EOF above
 			fprintf(stderr, "fgets error");
