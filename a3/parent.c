@@ -76,7 +76,7 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
     {
         RingMessage data = make_data_msg(tasks[i].receiver_id, tasks[i].task_id,
                                          tasks[i].sequence_num, tasks[i].filepath);
-        size_t bytes = write(ring_write_fd, &data, sizeof(RingMessage));
+        int bytes = write(ring_write_fd, &data, sizeof(RingMessage));
         if (bytes == -1)
         {
             perror("write data to ring");
@@ -93,7 +93,7 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
         for (int r = 0; r < num_files; r++)
         {
             RingMessage result_msg;
-            size_t rbytes = read(stat_read_fds[n], &result_msg, sizeof(RingMessage));
+            int rbytes = read(stat_read_fds[n], &result_msg, sizeof(RingMessage));
             if (rbytes == -1)
             {
                 perror("read result from stat pipe");
@@ -165,7 +165,7 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
 
     // Send shutdown message to the ring
     RingMessage shutdown = make_shutdown_msg();
-    size_t bytes = write(ring_write_fd, &shutdown, sizeof(RingMessage));
+    int bytes = write(ring_write_fd, &shutdown, sizeof(RingMessage));
     if (bytes == -1)
     {
         perror("write shutdown to ring");

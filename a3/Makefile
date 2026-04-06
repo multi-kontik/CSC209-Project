@@ -1,7 +1,7 @@
 # Makefile for CSC209 A3 Project
 
 CC = gcc
-FLAGS = -Wall -g
+FLAGS = -Wall -Wextra -g 
 
 .PHONY: all clean
 
