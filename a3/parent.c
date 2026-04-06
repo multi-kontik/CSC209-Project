@@ -104,12 +104,7 @@ void run_parent(int ring_write_fd, int stat_read_fds[], int num_nodes, const cha
                 fprintf(stderr, "stat pipe closed unexpectedly for node %d\n", n);
                 exit(EXIT_FAILURE);
             }
-            if (result_msg.status == STATUS_ERROR)
-            {
-                printf("Parent received an error report for task %d from node %d: %s\n",
-                       result_msg.task_id, result_msg.sender_id, result_msg.result);
-            }
-            else
+            if (result_msg.status == STATUS_OK)
             {
                 completed_tasks++;
             }
