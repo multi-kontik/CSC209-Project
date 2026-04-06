@@ -564,16 +564,18 @@ char *task(RingMessage rm)
 		fprintf(stderr, "fopen error: could not open file or file does not exist: %s\n", rm.payload);
 		return NULL;
 	}
-
-	// Find task
-	char *(*task)(FILE **) = find_task(rm.receiver_id);
-
-	// Do task and store results in ret; close file
-	char *ret = task(&file_ptr);
-	if (fclose(file_ptr) == -1)
+	else
 	{
-		fprintf(stderr, "fclose error on file %s\n", rm.payload);
-		return NULL;
+		// Find task
+		char *(*task)(FILE **) = find_task(rm.receiver_id);
+
+		// Do task and store results in ret; close file
+		char *ret = task(&file_ptr);
+		if (fclose(file_ptr) == -1)
+		{
+			fprintf(stderr, "fclose error on file %s\n", rm.payload);
+			return NULL;
+		}
+		return ret;
 	}
-	return ret;
 }
