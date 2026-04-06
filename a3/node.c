@@ -95,6 +95,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 // Error checking
                 if (result == NULL)
                 {
+                    printf("Node %d failed to process the task.\n", node_id);
                     snprintf(result, MAX_PAYLOAD, "Node %d failed to process the task.", node_id);
                     msg.status = STATUS_ERROR;
                 }
