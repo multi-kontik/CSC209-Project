@@ -108,7 +108,7 @@ void run_node(int node_id, int ring_read_fd, int ring_write_fd, int stat_write_f
                 int stat_bytes_written = write(stat_write_fd, &report_msg, sizeof(RingMessage));
                 if (stat_bytes_written == -1)
                 {
-                    printf("Node %d failed to send the report to the parent.\n", node_id);
+                    fprintf(stderr, "Node %d failed to send the report to the parent.\n", node_id);
                     perror("write on stat pipe");
                     exit(1); // Exit on write error
                 }
